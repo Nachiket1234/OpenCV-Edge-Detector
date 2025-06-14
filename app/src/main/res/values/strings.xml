@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">OpenCV Edge Detector</string>
+    <string name="convert_grayscale">Convert to Grayscale</string>
+    <string name="edge_test_desc">Test image for edge detector</string>
+</resources>
