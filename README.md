@@ -195,15 +195,3 @@ This is an assessment project. For educational purposes, feel free to fork and e
 
 *Built with Android Studio, OpenCV 4.x, OpenGL ES 3.0, and Camera2 API*
 
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/31790463-e113-4fe4-9077-60540731536c/CameraManager.java
-[2] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/b1866ffe-c9d0-40b0-8a44-0cc5c877cd1d/MainActivity.java
-[3] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/55877136-bfd4-4da1-b6a1-8cc52ee6a249/MyGLSurfaceView.java
-[4] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/52ca9bf5-02e7-4103-bac2-96aecc7080cc/MyRenderer.java
-[5] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/7b099480-73fd-48f1-8358-2fb31f17b50d/NativeRenderer.java
-[6] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/422bbb3a-c0ff-442e-afbf-defd9a5a8549/CMakeLists.txt
-[7] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/7ce4e779-c4b3-4cbf-822b-f6b58218fc5c/native_gl.cpp
-[8] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/cd9c72d0-4d75-4181-8381-4421cb92fea3/opencvedgedetector.cpp
-[9] https://pplx-res.cloudinary.com/image/private/user_uploads/50671909/0ae5105c-27dd-46ae-822b-ba62b069c7f8/WhatsApp-Image-2025-06-15-at-21.47.26_64fb6ab4.jpg
-[10] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/59a9da0c-5b49-4022-9495-41b90c8ba7d6/RnD-Intern-Assessment.pdf
-[11] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/c8d1ab5f-f75b-447e-901d-f75da0218a8b/CMakeLists.txt
-[12] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/50671909/83f06ca1-6f71-4d03-9761-f1a81db87b5e/native_gl.cpp
