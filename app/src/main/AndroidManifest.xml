@@ -3,7 +3,10 @@
     package="com.nachiket.opencvedgedetector"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- Place the permission here, directly under <manifest> -->
-    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera.any" android:required="false"/>
+
+
 
 
     <application
