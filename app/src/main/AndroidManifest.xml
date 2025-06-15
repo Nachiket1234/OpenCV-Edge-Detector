@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nachiket.opencvedgedetector"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- Place the permission here, directly under <manifest> -->
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+
 
     <application
         android:allowBackup="true"

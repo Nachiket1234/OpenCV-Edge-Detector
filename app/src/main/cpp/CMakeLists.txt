@@ -10,12 +10,10 @@ list(APPEND CMAKE_PREFIX_PATH "${OpenCV_DIR}")
 # Disable IPP optimizations (avoids trying to link libippicv.a)
 set(OpenCV_USE_IPP OFF CACHE BOOL "" FORCE)
 
-# Then point to your OpenCV SDK and find it:
-set(OpenCV_DIR "C:/OpenCV-android-sdk/OpenCV-android-sdk/sdk/native/jni")
-find_package(OpenCV REQUIRED)
 
 
-find_package(OpenCV REQUIRED)
+
+
 
 # 2. Include OpenCV headers
 include_directories(${OpenCV_INCLUDE_DIRS})

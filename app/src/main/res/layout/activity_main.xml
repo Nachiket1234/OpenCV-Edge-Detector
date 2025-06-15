@@ -1,22 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <!-- This is the special surface that OpenGL will draw on -->
     <com.nachiket.opencvedgedetector.MyGLSurfaceView
         android:id="@+id/glSurface"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    <!-- A button overlaid on top of the GLSurfaceView -->
-    <Button
-        android:id="@+id/btnConvert"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/convert_grayscale"
-        android:layout_margin="16dp"
-        android:layout_gravity="bottom|center_horizontal"/>
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-</FrameLayout>
+        <Button
+            android:id="@+id/btnOriginal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Original" />
+
+        <Button
+            android:id="@+id/btnGrayscale"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="Grayscale" />
+
+        <Button
+            android:id="@+id/btnEdgeDetection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Edge Detection" />
+
+    </LinearLayout>
+
+</LinearLayout>

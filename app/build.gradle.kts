@@ -22,7 +22,7 @@ android {
             }
         }
 
-        // <<< Add this to only build arm64-v8a, armeabi-v7a and x86_64
+
         ndk {
             // omit plain "x86" so you don’t pull in the broken libippicv.a
             abiFilters += listOf(
