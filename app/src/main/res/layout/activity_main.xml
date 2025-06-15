@@ -4,19 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- This is the special surface that OpenGL will draw on -->
     <com.nachiket.opencvedgedetector.MyGLSurfaceView
         android:id="@+id/glSurface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <!-- A button overlaid on top of the GLSurfaceView -->
     <Button
         android:id="@+id/btnConvert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/convert_grayscale"
-        android:layout_margin="16dp"
-        android:layout_gravity="bottom|center_horizontal"/>
-
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="16dp"/>
 </FrameLayout>
