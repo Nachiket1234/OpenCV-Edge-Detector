@@ -3,7 +3,6 @@ package com.nachiket.opencvedgedetector;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
 import android.hardware.camera2.*;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
@@ -12,16 +11,14 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
-import android.view.Surface;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class CameraManager {
     private static final String TAG = "CameraManager";
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
+
     private static Size chooseOptimalSize(Size[] choices) {
         // Pick the largest available size under MAX_PREVIEW_WIDTH x MAX_PREVIEW_HEIGHT
         Size optimalSize = choices[0];
@@ -32,6 +29,7 @@ public class CameraManager {
                 }
             }
         }
+        Log.d(TAG, "Chosen optimal size: " + optimalSize.getWidth() + "x" + optimalSize.getHeight());
         return optimalSize;
     }
 
@@ -45,8 +43,12 @@ public class CameraManager {
                         if (frameCallback != null && image != null) {
                             // Extract YUV data from all three planes
                             byte[] yuvData = extractYuvData(image);
-                            frameCallback.onFrameAvailable(yuvData, image.getWidth(), image.getHeight());
+                            if (yuvData != null) {
+                                frameCallback.onFrameAvailable(yuvData, image.getWidth(), image.getHeight());
+                            }
                         }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error processing image", e);
                     } finally {
                         if (image != null) {
                             image.close();
@@ -55,27 +57,34 @@ public class CameraManager {
                 }
 
                 private byte[] extractYuvData(Image image) {
-                    // Extract data from Y, U, V planes
-                    Image.Plane[] planes = image.getPlanes();
-                    ByteBuffer yBuffer = planes[0].getBuffer();
-                    ByteBuffer uBuffer = planes[1].getBuffer();
-                    ByteBuffer vBuffer = planes[2].getBuffer();
+                    try {
+                        // Extract data from Y, U, V planes
+                        Image.Plane[] planes = image.getPlanes();
+                        if (planes.length < 3) {
+                            Log.e(TAG, "Invalid number of planes: " + planes.length);
+                            return null;
+                        }
 
-                    int ySize = yBuffer.remaining();
-                    int uSize = uBuffer.remaining();
-                    int vSize = vBuffer.remaining();
+                        ByteBuffer yBuffer = planes[0].getBuffer();
+                        ByteBuffer uBuffer = planes[1].getBuffer();
+                        ByteBuffer vBuffer = planes[2].getBuffer();
 
-                    byte[] yuvData = new byte[ySize + uSize + vSize];
-                    yBuffer.get(yuvData, 0, ySize);
-                    uBuffer.get(yuvData, ySize, uSize);
-                    vBuffer.get(yuvData, ySize + uSize, vSize);
+                        int ySize = yBuffer.remaining();
+                        int uSize = uBuffer.remaining();
+                        int vSize = vBuffer.remaining();
 
-                    return yuvData;
+                        byte[] yuvData = new byte[ySize + uSize + vSize];
+                        yBuffer.get(yuvData, 0, ySize);
+                        uBuffer.get(yuvData, ySize, uSize);
+                        vBuffer.get(yuvData, ySize + uSize, vSize);
+
+                        return yuvData;
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error extracting YUV data", e);
+                        return null;
+                    }
                 }
             };
-
-
-
 
     private Context context;
     private CameraDevice cameraDevice;
@@ -92,23 +101,36 @@ public class CameraManager {
 
     public CameraManager(Context context) {
         this.context = context;
+        Log.d(TAG, "CameraManager created");
     }
 
     public void setFrameCallback(FrameCallback callback) {
         this.frameCallback = callback;
+        Log.d(TAG, "Frame callback set");
     }
 
     public void startCamera() {
-        startBackgroundThread();
-        openCamera();
+        Log.d(TAG, "Starting camera");
+        try {
+            startBackgroundThread();
+            openCamera();
+        } catch (Exception e) {
+            Log.e(TAG, "Error starting camera", e);
+        }
     }
 
     public void stopCamera() {
-        closeCamera();
-        stopBackgroundThread();
+        Log.d(TAG, "Stopping camera");
+        try {
+            closeCamera();
+            stopBackgroundThread();
+        } catch (Exception e) {
+            Log.e(TAG, "Error stopping camera", e);
+        }
     }
 
     public void release() {
+        Log.d(TAG, "Releasing camera");
         stopCamera();
     }
 
@@ -116,6 +138,7 @@ public class CameraManager {
         backgroundThread = new HandlerThread("CameraBackground");
         backgroundThread.start();
         backgroundHandler = new Handler(backgroundThread.getLooper());
+        Log.d(TAG, "Background thread started");
     }
 
     private void stopBackgroundThread() {
@@ -125,6 +148,7 @@ public class CameraManager {
                 backgroundThread.join();
                 backgroundThread = null;
                 backgroundHandler = null;
+                Log.d(TAG, "Background thread stopped");
             } catch (InterruptedException e) {
                 Log.e(TAG, "Error stopping background thread", e);
             }
@@ -137,11 +161,30 @@ public class CameraManager {
                 (android.hardware.camera2.CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
 
         try {
-            String cameraId = manager.getCameraIdList()[0];
+            String[] cameraIds = manager.getCameraIdList();
+            if (cameraIds.length == 0) {
+                Log.e(TAG, "No cameras available");
+                return;
+            }
+
+            String cameraId = cameraIds[0];
+            Log.d(TAG, "Using camera ID: " + cameraId);
+
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
 
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            previewSize = chooseOptimalSize(map.getOutputSizes(ImageFormat.YUV_420_888));
+            if (map == null) {
+                Log.e(TAG, "StreamConfigurationMap is null");
+                return;
+            }
+
+            Size[] outputSizes = map.getOutputSizes(ImageFormat.YUV_420_888);
+            if (outputSizes == null || outputSizes.length == 0) {
+                Log.e(TAG, "No output sizes available for YUV_420_888");
+                return;
+            }
+
+            previewSize = chooseOptimalSize(outputSizes);
 
             imageReader = ImageReader.newInstance(previewSize.getWidth(), previewSize.getHeight(),
                     ImageFormat.YUV_420_888, 2);
@@ -150,6 +193,8 @@ public class CameraManager {
             manager.openCamera(cameraId, stateCallback, backgroundHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "Error opening camera", e);
+        } catch (SecurityException e) {
+            Log.e(TAG, "Camera permission not granted", e);
         }
     }
 
@@ -166,35 +211,44 @@ public class CameraManager {
             imageReader.close();
             imageReader = null;
         }
+        Log.d(TAG, "Camera closed");
     }
 
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
+            Log.d(TAG, "Camera opened");
             cameraDevice = camera;
             createCaptureSession();
         }
 
         @Override
         public void onDisconnected(CameraDevice camera) {
+            Log.d(TAG, "Camera disconnected");
             camera.close();
             cameraDevice = null;
         }
 
         @Override
         public void onError(CameraDevice camera, int error) {
+            Log.e(TAG, "Camera error: " + error);
             camera.close();
             cameraDevice = null;
-            Log.e(TAG, "Camera error: " + error);
         }
     };
 
     private void createCaptureSession() {
         try {
+            if (cameraDevice == null || imageReader == null) {
+                Log.e(TAG, "Camera device or image reader is null");
+                return;
+            }
+
             cameraDevice.createCaptureSession(Arrays.asList(imageReader.getSurface()),
                     new CameraCaptureSession.StateCallback() {
                         @Override
                         public void onConfigured(CameraCaptureSession session) {
+                            Log.d(TAG, "Capture session configured");
                             captureSession = session;
                             startPreview();
                         }
@@ -211,17 +265,23 @@ public class CameraManager {
 
     private void startPreview() {
         try {
+            if (cameraDevice == null || captureSession == null || imageReader == null) {
+                Log.e(TAG, "Cannot start preview - components not ready");
+                return;
+            }
+
             CaptureRequest.Builder builder =
                     cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             builder.addTarget(imageReader.getSurface());
             builder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
-            // this is what actually pushes the camera frames into your ImageReader
+            // Start the repeating request
             captureSession.setRepeatingRequest(
                     builder.build(),
                     null,
                     backgroundHandler
             );
+            Log.d(TAG, "Preview started");
         } catch (CameraAccessException e) {
             Log.e(TAG, "Error starting camera preview", e);
         }

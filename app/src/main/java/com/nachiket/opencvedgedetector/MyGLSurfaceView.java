@@ -1,25 +1,28 @@
-// MyGLSurfaceView.java
 package com.nachiket.opencvedgedetector;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 public class MyGLSurfaceView extends GLSurfaceView {
-    // hold onto the renderer instance
-    private MyRenderer renderer;
+    private static final String TAG = "MyGLSurfaceView";
 
-//    public MyGLSurfaceView(Context context) {
-//        super(context);
-//        init();
-//    }
+    private MyRenderer renderer;
 
     public MyGLSurfaceView(Context ctx, AttributeSet attrs) {
         super(ctx, attrs);
-        setEGLContextClientVersion(3);
-        renderer = new MyRenderer(ctx);
-        setRenderer(renderer);
-        setRenderMode(RENDERMODE_WHEN_DIRTY);
+        Log.d(TAG, "Creating MyGLSurfaceView");
+
+        try {
+            setEGLContextClientVersion(3);
+            renderer = new MyRenderer(ctx);
+            setRenderer(renderer);
+            setRenderMode(RENDERMODE_CONTINUOUSLY); // Changed to continuous for better debugging
+            Log.d(TAG, "MyGLSurfaceView setup complete");
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting up GLSurfaceView", e);
+        }
     }
 
     public MyRenderer getRenderer() {
